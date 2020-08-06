@@ -1,0 +1,14 @@
+{
+  "extension": "gost-gantt-chart",
+  "output": "./dist",
+  "compile": {
+    "entry": "./src/index.js",
+    "qext": "./src/index.qext",
+    "static": "./static"
+  },
+  "serverDeploy": {
+    "host": "bi.gost-group.com",
+    "isSecure": true,
+    "windowsAuth": true
+  }
+}

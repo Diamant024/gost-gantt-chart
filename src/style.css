@@ -1,0 +1,24 @@
+.gtaskblue {
+    background: skyblue;
+}
+.gtaskbluecomplete{
+    margin-top: 0;
+    background-color: royalblue;
+    opacity: 1;
+    height: 13px;
+}
+.ggroupcaption, .gcaption {
+    right: auto;
+    left: 5px;
+    top: 3px;
+    color: white;
+}
+.gtaskname {
+    text-align: left;
+}
+.gantt-chart {
+    width: 100%;
+}
+.gchartcontainer {
+    height: 100%;
+}
