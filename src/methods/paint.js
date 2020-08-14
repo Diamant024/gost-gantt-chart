@@ -60,10 +60,15 @@ export default async function($element, layout) {
 
 	await Promise.all([getData, getRelations])
 		.then(([{data: gantData}, {data: relData}]) => {
+
 			const filteredRelData = relData.filter(el => (el.to.qText !== '-') && (el.from.qText !== '-'));
-			console.log('Зависимости', filteredRelData);
+
 			gantData.forEach((el, ind, arr) => {
 				const d = {};
+				let className = 'gtaskblue';
+				if (!Date.parse(el.end.qText)) {
+					className = 'invisible';
+				}
 				const dep = filteredRelData.find(relEl => relEl.to.qText === el.id.qText);
 				let depId = null;
 				if (dep) {
@@ -75,15 +80,25 @@ export default async function($element, layout) {
 					const parent = arr.find(task => task.id.qText === el.parent.qText);
 					parentId = parent.id.qElemNumber + 1;
 				}
+				// let parentId = 0;
+				// if (el.parent.qText !== '-') {
+				// 	const parent = arr.find(task => task.id.qText === el.parent.qText);
+				// 	parentId = parent.id.qElemNumber + 1;
+				// }
 				d.pID = el.id.qElemNumber + 1;
 				d.pName = el.name.qText;
 				d.pClass = 'gtaskblue';
 				d.pStart = el.start.qText.split('.').reverse().join('-');
 				d.pEnd = el.end.qText.split('.').reverse().join('-');
+				d.pClass = className;
+				d.pStart = el.start.qText;
+				d.pEnd = el.end.qText;
 				d.pComp = el.progress.qText;
 				d.pGantt = gant;
 				d.pParent = parentId;
 				d.pGroup = el.type.qText === 'Target' ? 1 : 0;
+				// d.pParent = parentId;
+				// d.pGroup = el.type.qText === 'Target' ? 1 : 0;
 				d.pOpen = 1;
 				d.pDepend = depId;
 
