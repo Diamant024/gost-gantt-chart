@@ -1,11 +1,21 @@
 import * as JSGantt from 'jsgantt-improved';
 import axios from 'axios';
+import 'jsgantt-improved/dist/jsgantt.css';
+
+export default async function($element, layout) {
+
+	const baseURL = 'https://rfs-gap.gost-group.com/api',
+		dataPath = '/gantt/gantt_1_1?format=expanded',
+		relationsPath = '/gantt/gantt_relation?format=expanded';
+
+	const gant = new JSGantt.GanttChart($element[0], 'day');
+
+	const transport = axios.create({
+		baseURL
+	});
 
 
-export default function($element, layout) {
-	const g = new JSGantt.GanttChart($element, 'day');
-
-	g.setOptions({
+	gant.setOptions({
 		vCaptionType: 'Complete',  // Set to Show Caption : None,Caption,Resource,Duration,Complete,
 		vQuarterColWidth: 270,
 		vDateTaskDisplayFormat: 'day dd month yyyy', // Shown in tool tip box
@@ -24,7 +34,8 @@ export default function($element, layout) {
 		vFormatArr: ['Day', 'Week', 'Month','Quarter'], // Even with setUseSingleCell using Hour format on such a large chart can cause issues in some browsers,
 		vEvents: {
 			afterDraw: ()=>{
-				const taskNameColumn = document.querySelectorAll('.gantt-chart .gtaskname');
+				const taskNameColumn = $element[0].querySelectorAll('.gtaskname');
+
 				taskNameColumn.forEach((el, ind) => {
 					if (ind <= 1) {
 						return;
@@ -33,7 +44,9 @@ export default function($element, layout) {
 					indSpan.append(`${ind - 1} `);
 					el.querySelector('div').prepend(indSpan);
 				});
+
 				const taskNameHeader = taskNameColumn[1];
+
 				taskNameHeader.firstChild.data = 'Цель/Задача';
 				taskNameHeader.style.fontSize = '10px';
 				taskNameHeader.style.fontWeight = '700';
@@ -42,7 +55,10 @@ export default function($element, layout) {
 		}
 	});
 
-	Promise.all([axios.request(PATHS.GANTT1), api.request(PATHS.GANTT1_RELATIONS)])
+	let getData = transport.get(dataPath),
+		getRelations = transport.get(relationsPath);
+
+	await Promise.all([getData, getRelations])
 		.then(([{data: gantData}, {data: relData}]) => {
 			const filteredRelData = relData.filter(el => (el.to.qText !== '-') && (el.from.qText !== '-'));
 			console.log('Зависимости', filteredRelData);
@@ -65,13 +81,16 @@ export default function($element, layout) {
 				d.pStart = el.start.qText.split('.').reverse().join('-');
 				d.pEnd = el.end.qText.split('.').reverse().join('-');
 				d.pComp = el.progress.qText;
-				d.pGantt = g;
+				d.pGantt = gant;
 				d.pParent = parentId;
 				d.pGroup = el.type.qText === 'Target' ? 1 : 0;
 				d.pOpen = 1;
 				d.pDepend = depId;
-				g.AddTaskItemObject(d);
+
+				gant.AddTaskItemObject(d);
 			});
-			g.Draw();
+
 		});
+
+	gant.Draw();
 }

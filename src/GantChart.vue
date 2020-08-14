@@ -1,9 +1,10 @@
 <template>
-  <div class="gantt-chart"></div>
+  <div class="gost-gantt-chart-qv-object"></div>
 </template>
 
 <script>
 import paint from './methods/paint';
+import 'jsgantt-improved/dist/jsgantt.css';
 
 export default {
   name: "GanttChart",
@@ -14,7 +15,7 @@ export default {
   },
   mounted() {
 
-    const chart = paint(this.$vnode.elm);
+    const chart = paint([this.$vnode.elm]);
 
   },
 }
