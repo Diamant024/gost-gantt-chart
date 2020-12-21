@@ -4,14 +4,13 @@ import 'jsgantt-improved/dist/jsgantt.css';
 
 export default async function($element, layout) {
 
-	const baseURL = 'https://rfs-gap.gost-group.com/api',
-		dataPath = '/gantt/gantt_1_1?format=expanded',
+	const dataPath = '/gantt/gantt_1_1?format=expanded',
 		relationsPath = '/gantt/gantt_relation?format=expanded';
 
 	const gant = new JSGantt.GanttChart($element[0], 'day');
 
 	const transport = axios.create({
-		baseURL
+		baseURL: layout.baseURL
 	});
 
 

@@ -15,7 +15,7 @@ export default {
   },
   mounted() {
 
-    const chart = paint([this.$vnode.elm]);
+    const chart = paint([this.$vnode.elm], { baseURL: 'http://10.110.5.37' });
 
   },
 }

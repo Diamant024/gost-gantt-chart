@@ -2,8 +2,16 @@ export default {
 	type: "items",
 	component: "accordion",
 	items: {
-		settings: {
+		appearancePanel: {
 			uses: "settings",
-		},
+			items: {
+				baseURL: {
+					ref: "baseURL",
+					type: "string",
+					label: "API base url",
+					defaultValue: ""
+				}
+			}
+		}
 	},
 }
