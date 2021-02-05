@@ -1,20 +1,64 @@
 import * as JSGantt from 'jsgantt-improved';
-import axios from 'axios';
+
 import 'jsgantt-improved/dist/jsgantt.css';
 
-export default async function($element, layout) {
+function setDataToChart(chart, tasks, relations) {
 
-	const dataPath = '/gantt/gantt_1_1?format=expanded',
-		relationsPath = '/gantt/gantt_relation?format=expanded';
+	const correctRelations = relations.filter(el => (el.to.qText !== '-') && (el.from.qText !== '-'));
 
-	const gant = new JSGantt.GanttChart($element[0], 'day');
+	tasks.forEach((el, ind, arr) => {
+		const task = {};
 
-	const transport = axios.create({
-		baseURL: layout.baseURL
+		let className = 'gtaskblue';
+
+		if (!Date.parse(el.end.qText)) {
+			className = 'invisible';
+		}
+		const dep = correctRelations.find(relEl => relEl.to.qText === el.id.qText);
+
+		let depId = null;
+
+		if (dep) {
+			const foundTask = arr.find(task => task.id.qText === dep.from.qText);
+			depId = foundTask.id.qElemNumber + 1;
+		}
+
+		let parentId = 0;
+
+		if (el.parent.qText !== '-') {
+			const parent = arr.find(task => task.id.qText === el.parent.qText);
+			if (parent)
+				parentId = parent.id.qElemNumber + 1;
+		}
+		// let parentId = 0;
+		// if (el.parent.qText !== '-') {
+		// 	const parent = arr.find(task => task.id.qText === el.parent.qText);
+		// 	parentId = parent.id.qElemNumber + 1;
+		// }
+		task.pID = el.id.qElemNumber + 1;
+		task.pName = el.name.qText;
+		task.pClass = 'gtaskblue';
+		task.pStart = el.start.qText.split('.').reverse().join('-');
+		task.pEnd = el.end.qText.split('.').reverse().join('-');
+		task.pClass = className;
+		task.pStart = el.start.qText;
+		task.pEnd = el.end.qText;
+		task.pComp = el.progress.qText;
+		task.pGantt = chart;
+		task.pParent = parentId;
+		task.pGroup = el.type.qText === 'Target' ? 1 : 0;
+		task.pOpen = 1;
+		task.pDepend = depId;
+
+		chart.AddTaskItemObject(task);
 	});
+}
 
+export default function($element, layout) {
 
-	gant.setOptions({
+	const chart = new JSGantt.GanttChart($element[0], 'day');
+
+	chart.setOptions({
 		vCaptionType: 'Complete',  // Set to Show Caption : None,Caption,Resource,Duration,Complete,
 		vQuarterColWidth: 270,
 		vDateTaskDisplayFormat: 'day dd month yyyy', // Shown in tool tip box
@@ -35,6 +79,9 @@ export default async function($element, layout) {
 			afterDraw: ()=>{
 				const taskNameColumn = $element[0].querySelectorAll('.gtaskname');
 
+				if (!taskNameColumn.length)
+					return;
+
 				taskNameColumn.forEach((el, ind) => {
 					if (ind <= 1) {
 						return;
@@ -54,57 +101,7 @@ export default async function($element, layout) {
 		}
 	});
 
-	let getData = transport.get(dataPath),
-		getRelations = transport.get(relationsPath);
+	setDataToChart(chart, layout.tasks, layout.relations)
 
-	await Promise.all([getData, getRelations])
-		.then(([{data: gantData}, {data: relData}]) => {
-
-			const filteredRelData = relData.filter(el => (el.to.qText !== '-') && (el.from.qText !== '-'));
-
-			gantData.forEach((el, ind, arr) => {
-				const d = {};
-				let className = 'gtaskblue';
-				if (!Date.parse(el.end.qText)) {
-					className = 'invisible';
-				}
-				const dep = filteredRelData.find(relEl => relEl.to.qText === el.id.qText);
-				let depId = null;
-				if (dep) {
-					const foundTask = arr.find(task => task.id.qText === dep.from.qText);
-					depId = foundTask.id.qElemNumber + 1;
-				}
-				let parentId = 0;
-				if (el.parent.qText !== '-') {
-					const parent = arr.find(task => task.id.qText === el.parent.qText);
-					parentId = parent.id.qElemNumber + 1;
-				}
-				// let parentId = 0;
-				// if (el.parent.qText !== '-') {
-				// 	const parent = arr.find(task => task.id.qText === el.parent.qText);
-				// 	parentId = parent.id.qElemNumber + 1;
-				// }
-				d.pID = el.id.qElemNumber + 1;
-				d.pName = el.name.qText;
-				d.pClass = 'gtaskblue';
-				d.pStart = el.start.qText.split('.').reverse().join('-');
-				d.pEnd = el.end.qText.split('.').reverse().join('-');
-				d.pClass = className;
-				d.pStart = el.start.qText;
-				d.pEnd = el.end.qText;
-				d.pComp = el.progress.qText;
-				d.pGantt = gant;
-				d.pParent = parentId;
-				d.pGroup = el.type.qText === 'Target' ? 1 : 0;
-				// d.pParent = parentId;
-				// d.pGroup = el.type.qText === 'Target' ? 1 : 0;
-				d.pOpen = 1;
-				d.pDepend = depId;
-
-				gant.AddTaskItemObject(d);
-			});
-
-		});
-
-	gant.Draw();
+	chart.Draw();
 }

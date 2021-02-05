@@ -2,6 +2,7 @@ import { initialProperties, template, definition, controller, paint, resize } fr
 import "./style.css"
 
 window.define([], function() {
+
 	return {
 		initialProperties,
 		template,

@@ -13,11 +13,31 @@ export default {
       chart: Object
     }
   },
+  props: {
+    tasks: {
+      type: Array,
+      default: () => []
+    },
+    relations: {
+      type: Array,
+      default: () => []
+    }
+  },
   mounted() {
 
-    const chart = paint([this.$vnode.elm], { baseURL: 'http://10.110.5.37' });
 
   },
+  watch:{
+    relations (to, from){
+      if (to)
+        this.setupChart();
+    }
+  },
+  methods: {
+    setupChart() {
+      this.chart = paint([this.$vnode.elm], { tasks: this.tasks, relations: this.relations });
+    }
+  }
 }
 </script>
 
