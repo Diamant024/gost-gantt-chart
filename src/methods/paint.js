@@ -83,7 +83,7 @@ export default function($element, layout) {
 					return;
 
 				taskNameColumn.forEach((el, ind) => {
-					if (ind <= 1 && ind === taskNameColumn.length) {
+					if (ind <= 1 || ind === taskNameColumn.length) {
 						return;
 					}
 					const indSpan = document.createElement("span");
