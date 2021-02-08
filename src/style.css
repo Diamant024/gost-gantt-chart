@@ -37,3 +37,6 @@
 .gtasktable > tbody > tr:last-child {
     height: 40px !important;
 }
+.rhscrpad {
+    display: none;
+}
