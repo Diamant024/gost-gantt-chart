@@ -34,6 +34,6 @@
 .gost-gantt-chart-qv-object {
     display: inline;
 }
-.gtasktable > tbody:last-child {
+.gtasktable > tbody > tr:last-child {
     height: 40px;
 }
