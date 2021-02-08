@@ -22,3 +22,10 @@
 .gchartcontainer {
     height: 100%;
 }
+.gtaskname div {
+    position: absolute;
+    box-sizing: border-box;
+    width: calc(100% - 5px);
+    max-width: unset;
+    min-width: unset;
+}
