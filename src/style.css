@@ -28,3 +28,12 @@
     max-width: unset;
     min-width: unset;
 }
+.gmainleft {
+    padding-bottom: 10px;
+}
+.gost-gantt-chart-qv-object {
+    display: inline;
+}
+.gtasktable > tbody:last-child {
+    height: 40px;
+}
