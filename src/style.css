@@ -29,10 +29,10 @@
     min-width: unset;
 }
 .gmainright {
-    flex-basis: 75%;
+    flex-basis: 67%;
 }
 .gmainleft {
-    flex-basis: 25%;
+    flex-basis: 33%;
     padding-bottom: 10px;
 }
 .gost-gantt-chart-qv-object {
