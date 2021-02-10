@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div style="display: contents;">
     <div class="gost-gantt-chart-qv-object"></div>
   </div>
 </template>

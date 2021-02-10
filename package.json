@@ -1,7 +1,7 @@
 {
   "name": "gost-gantt-chart",
   "main": "src/GantChart.vue",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Gantt Chart",
   "scripts": {
     "build": "qext-scripts",
