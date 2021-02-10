@@ -6,23 +6,51 @@ export default {
 			label: "Задачи",
 			ref: "tasks",
 			items: {
-				dim1: {
-					ref: "tasks.dimension1",
+				id: {
+					ref: "tasks.id",
 					label: "ID задачи",
 					type: "string",
 					component: "expression",
 					expression: "optional"
 				},
-				dim2: {
-					ref: "tasks.dimension2",
+				name: {
+					ref: "tasks.name",
 					label: "Название задачи",
 					type: "string",
 					component: "expression",
 					expression: "optional"
 				},
-				mea1: {
-					ref: "tasks.measure1",
-					label: "Measure",
+				parent: {
+					ref: "tasks.parent",
+					label: "ID родителя задачи",
+					type: "string",
+					component: "expression",
+					expression: "optional"
+				},
+				type: {
+					ref: "tasks.type",
+					label: "Тип задачи",
+					type: "string",
+					component: "expression",
+					expression: "optional"
+				},
+				start: {
+					ref: "tasks.start",
+					label: "Дата начала",
+					type: "string",
+					component: "expression",
+					expression: "optional"
+				},
+				end: {
+					ref: "tasks.end",
+					label: "Дата конца",
+					type: "string",
+					component: "expression",
+					expression: "optional"
+				},
+				progress: {
+					ref: "tasks.progress",
+					label: "Прогресс",
 					type: "string",
 					component: "expression",
 					expression: "optional"
@@ -33,22 +61,22 @@ export default {
 			label: "Связи",
 			ref: "relations",
 			items: {
-				dim1: {
-					ref: "relations.dimension1",
+				to: {
+					ref: "relations.to",
 					label: "ID потомка",
 					type: "string",
 					component: "expression",
 					expression: "optional"
 				},
-				dim2: {
-					ref: "relations.dimension2",
+				from: {
+					ref: "relations.from",
 					label: "ID родителя",
 					type: "string",
 					component: "expression",
 					expression: "optional"
 				},
-				mea1: {
-					ref: "relations.measure1",
+				type: {
+					ref: "relations.type",
 					label: "Тип связи",
 					type: "string",
 					component: "expression",

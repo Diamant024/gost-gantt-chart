@@ -5,60 +5,110 @@ export default [
 	"$element",
 	function($scope, $element) {
 
-	console.log($scope.layout.tasks)
+		const app = qlik.currApp();
 
-		let app = qlik.currApp();
+		/*$scope.$watchCollection('layout.data', () => {
+			createHyperCube().then(() => {
+				$scope.component.paint($element, $scope.layout)
+			})
+		});*/
 
-		$scope.hyperCube;
+		app.selectionState().OnData.bind(() =>
+			createHyperCube().then(() => {
+				$scope.component.paint($element, $scope.layout)
+			})
+		);
 
 		function createHyperCube() {
-			if ($scope.hyperCube) {
-				console.log('existing cube', $scope.hyperCube);
-				app.destroySessionObject($scope.hyperCube.qInfo.qId).then(function (reply) {
-					console.log('destroySessionObject result', reply);
-				});
-			}
 
-			if ($scope.layout.props && !_.isEmpty( $scope.layout.props.dimension1 ) && !_.isEmpty( $scope.layout.props.measure1 ) ) {
+			let tasksCubeDef = getTasksHyperCubeDef($scope.layout.tasks),
+				relationsCubeDef = getRelationsHyperCubeDef($scope.layout.relations);
 
-				let cubeDef = {
-					qDimensions: [{
-						qDef: {
-							qFieldDefs: [$scope.layout.props.dimension1],
-							qSortCriterias: [
-								{
-									qSortByAscii: 1
-								}
-							]
-						}
-					}],
-					qMeasures: [{
-						qDef: {
-							qDef: "=" + $scope.layout.props.measure1
-						}
-					}],
-					qInterColumnSortOrder: [0, 1],
-					qInitialDataFetch: [
-						{
-							qTop: 0,
-							qLeft: 0,
-							qHeight: 100,
-							qWidth: 2
-						}
-					]
-				};
+			let requests = [app.createCube(tasksCubeDef), app.createCube(relationsCubeDef)];
 
-				app.createCube(cubeDef, function (reply) {
-					console.log('cube', reply);
-					$scope.hyperCube = reply;
-				});
-			}
+			return Promise.all(requests).then(([tasksCube, relationsCube]) => {
+				const tasks = tasksCube.layout.qHyperCube.qDataPages[0].qMatrix.map(item => {
+					return { id: item[0], name: item[1], parent: item[5], type: item[6], start: item[2], end: item[3], progress: item[4] }
+				})
+
+				const relations = relationsCube.layout.qHyperCube.qDataPages[0].qMatrix.map(item => {
+					return { to: item[0], from: item[1] }
+				})
+
+				$scope.layout.data = { tasks, relations }
+
+
+				app.destroySessionObject(tasksCube.id);
+				app.destroySessionObject(relationsCube.id);
+			})
 		}
 
-		$scope.$watchCollection('layout.props', function ( newVal ) {
-			console.log( 'new Vals', newVal );
-			createHyperCube();
-		});
-		createHyperCube();
+		return createHyperCube();
 	}
 ]
+
+function getTasksHyperCubeDef(tasksProps) {
+	let cubeDef = {
+		qDimensions: [
+			{
+				qDef: {
+					qFieldDefs: [tasksProps.id]
+				}
+			},
+			{
+				qDef: {
+					qFieldDefs: [tasksProps.name]
+				}
+			}
+		],
+		qMeasures: [
+			{ qDef: { qDef: tasksProps.start } },
+			{ qDef: { qDef: tasksProps.end } },
+			{ qDef: { qDef: tasksProps.progress } },
+			{ qDef: { qDef: tasksProps.parent } },
+			{ qDef: { qDef: tasksProps.type } },
+		],
+		qInitialDataFetch: [
+			{
+				qTop: 0,
+				qLeft: 0,
+				qHeight: 1000,
+				qWidth: 7
+			}
+		]
+	};
+
+	return cubeDef;
+}
+
+function getRelationsHyperCubeDef(relationsProps) {
+	let cubeDef = {
+		qDimensions: [
+			{
+				qDef: {
+					qFieldDefs: [relationsProps.to]
+				}
+			},
+			{
+				qDef: {
+					qFieldDefs: [relationsProps.from]
+				}
+			}
+		],
+		qMeasures: [{
+			qDef: {
+				qDef: relationsProps.type
+			}
+		}],
+		qInitialDataFetch: [
+			{
+				qTop: 0,
+				qLeft: 0,
+				qHeight: 3333,
+				qWidth: 3
+			}
+		]
+	};
+
+	return cubeDef;
+}

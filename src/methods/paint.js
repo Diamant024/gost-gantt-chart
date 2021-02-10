@@ -23,18 +23,13 @@ function setDataToChart(chart, tasks, relations) {
 			depId = foundTask.id.qElemNumber + 1;
 		}
 
-		let parentId = 0;
-
 		if (el.parent.qText !== '-') {
 			const parent = arr.find(task => task.id.qText === el.parent.qText);
+
 			if (parent)
-				parentId = parent.id.qElemNumber + 1;
+				task.pParent = parent.id.qElemNumber + 1;
 		}
-		// let parentId = 0;
-		// if (el.parent.qText !== '-') {
-		// 	const parent = arr.find(task => task.id.qText === el.parent.qText);
-		// 	parentId = parent.id.qElemNumber + 1;
-		// }
+
 		task.pID = el.id.qElemNumber + 1;
 		task.pName = el.name.qText;
 		task.pClass = 'gtaskblue';
@@ -45,7 +40,6 @@ function setDataToChart(chart, tasks, relations) {
 		task.pEnd = el.end.qText;
 		task.pComp = el.progress.qText;
 		task.pGantt = chart;
-		task.pParent = parentId;
 		task.pGroup = el.type.qText === 'Target' ? 1 : 0;
 		task.pOpen = 1;
 		task.pDepend = depId;
@@ -56,7 +50,11 @@ function setDataToChart(chart, tasks, relations) {
 
 export default function($element, layout) {
 
-	const chart = new JSGantt.GanttChart($element[0], 'day');
+	if (!layout.data) {
+		return;
+	}
+
+	const chart = new JSGantt.GanttChart($element[0].querySelector('.gost-gantt-chart-qv-object'), 'day');
 
 	chart.setOptions({
 		vCaptionType: 'Complete',  // Set to Show Caption : None,Caption,Resource,Duration,Complete,
@@ -101,7 +99,7 @@ export default function($element, layout) {
 		}
 	});
 
-	setDataToChart(chart, layout.tasks, layout.relations)
+	setDataToChart(chart, layout.data.tasks, layout.data.relations)
 
 	chart.Draw();
 }

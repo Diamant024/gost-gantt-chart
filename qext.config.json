@@ -7,7 +7,7 @@
     "static": "./static"
   },
   "serverDeploy": {
-    "host": "bi.gost-group.com",
+    "host": "bi.platform.rfs.ru",
     "isSecure": true,
     "windowsAuth": true
   }

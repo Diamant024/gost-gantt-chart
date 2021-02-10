@@ -35,7 +35,7 @@ export default {
   },
   methods: {
     setupChart() {
-      this.chart = paint([this.$vnode.elm], { tasks: this.tasks, relations: this.relations });
+      this.chart = paint([this.$vnode.elm], { data: { tasks: this.tasks, relations: this.relations } });
     }
   }
 }

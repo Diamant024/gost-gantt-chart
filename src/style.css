@@ -44,3 +44,6 @@
 .rhscrpad {
     display: none;
 }
+.qv-inner-object {
+    padding: 0 !important;
+}
