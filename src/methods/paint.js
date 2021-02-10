@@ -23,14 +23,10 @@ function setDataToChart(chart, tasks, relations) {
 			depId = foundTask.id.qElemNumber + 1;
 		}
 
-		if (el.parent.qText !== '-') {
-			const parent = arr.find(task => task.id.qText === el.parent.qText);
+		const parent = arr.find(task => task.id.qText === el.parent.qText);
 
-			if (parent)
-				task.pParent = parent.id.qElemNumber + 1;
-		}
-
-		task.pID = el.id.qElemNumber + 1;
+		task.pID = el.id.qElemNumber;
+		task.pParent = parent ? parent.id.qElemNumber : 0;
 		task.pName = el.name.qText;
 		task.pClass = 'gtaskblue';
 		task.pStart = el.start.qText.split('.').reverse().join('-');
