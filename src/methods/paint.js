@@ -95,6 +95,20 @@ export default function($element, layout) {
 		}
 	});
 
+	chart.setTooltipTemplate(function(task) {
+		let taskData = task.getAllData();
+
+		const diffDays = Math.ceil(Math.abs(taskData.pEnd - taskData.pStart) / (1000 * 60 * 60 * 24));
+		console.log(taskData);
+
+		return `<h2>${taskData.pName}</h2>
+			<p>Дата начала: ${taskData.pStart.toLocaleDateString()}</p>
+			<p>Дата конца: ${taskData.pEnd.toLocaleDateString()}</p>
+			<p>Длительность в днях: ${diffDays}</p>
+			<p>Выполнено: ${taskData.pComp}%</p>
+		`;
+	});
+
 	setDataToChart(chart, layout.data.tasks, layout.data.relations)
 
 	chart.Draw();

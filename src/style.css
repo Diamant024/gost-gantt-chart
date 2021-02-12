@@ -47,3 +47,7 @@
 .qv-inner-object {
     padding: 0 !important;
 }
+.gTaskInfo {
+    max-width: 350px;
+    width: auto;
+}
