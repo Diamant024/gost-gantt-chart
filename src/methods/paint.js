@@ -99,7 +99,6 @@ export default function($element, layout) {
 		let taskData = task.getAllData();
 
 		const diffDays = Math.ceil(Math.abs(taskData.pEnd - taskData.pStart) / (1000 * 60 * 60 * 24));
-		console.log(taskData);
 
 		return `<h2>${taskData.pName}</h2>
 			<p>Дата начала: ${taskData.pStart.toLocaleDateString()}</p>
